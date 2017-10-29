@@ -1,0 +1,4 @@
+https://www.tutorialspoint.com/android/android_network_connection.htm
+https://www.codeproject.com/Articles/814814/Android-Connectivity
+https://developer.android.com/training/connect-devices-wirelessly/nsd.html
+https://github.com/RyanBerti/p2pwifidirect
