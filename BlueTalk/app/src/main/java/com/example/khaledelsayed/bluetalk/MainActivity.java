@@ -9,18 +9,15 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import com.example.khaledelsayed.bluetalk.dummy.DummyContent;
 
 public class MainActivity extends AppCompatActivity
-implements ChatsFragment.OnFragmentInteractionListener,HomeFragment.OnFragmentInteractionListener,StatusFragment.OnListFragmentInteractionListener{
+implements ChatsFragment.OnFragmentInteractionListener,HomeFragment.OnFragmentInteractionListener,ConStatusFragment.OnFragmentInteractionListener{
 
 
  public  void onFragmentInteraction(Uri uri){
 
     }
-public void onListFragmentInteraction(DummyContent.DummyItem item){
 
-}
   private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -32,7 +29,7 @@ public void onListFragmentInteraction(DummyContent.DummyItem item){
                     selectedFragment = HomeFragment.newInstance();
                     break;
                 case R.id.navigation_status:
-                    selectedFragment = StatusFragment.newInstance(1);
+                    selectedFragment = ConStatusFragment.newInstance();
                     break;
                 case R.id.navigation_chats:
                     selectedFragment = ChatsFragment.newInstance();
