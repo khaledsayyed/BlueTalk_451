@@ -95,7 +95,7 @@ public class HomeFragment extends Fragment {
         protected Void doInBackground(Void... arg0) {
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
-            String url = "http://localhost/dumdata.json";
+            String url = "https://451data.000webhostapp.com/dumdata.json";
             String jsonStr = sh.makeServiceCall(url);
 
          //Log.e(TAG, "Response from url: " + jsonStr);
