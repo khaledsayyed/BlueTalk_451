@@ -12,12 +12,14 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.telephony.PhoneStateListener;
+import android.telephony.SignalStrength;
+import android.telephony.TelephonyManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckedTextView;
-
-
+import android.widget.TextView;
 
 
 /**
@@ -29,6 +31,11 @@ import android.widget.CheckedTextView;
  * create an instance of this fragment.
  */
 public class ConStatusFragment extends Fragment {
+    TelephonyManager mTelephonyManager;
+    MyPhoneStateListener mPhoneStatelistener;
+    int mSignalStrength = 0;
+    TextView txtSignalStr;
+
     private OnFragmentInteractionListener mListener;
     private CheckedTextView bluetooth,wifi,mobile;
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -59,7 +66,7 @@ public class ConStatusFragment extends Fragment {
             ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
             NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-            mobile.setText(((!wifiManager.isWifiEnabled())&&networkInfo!=null&&networkInfo.isConnected())?"on":"OFF");
+            mobile.setText(((!wifiManager.isWifiEnabled())&&networkInfo!=null&&networkInfo.isConnected())?"ON":"OFF");
             mobile.setChecked(((!wifiManager.isWifiEnabled())&&networkInfo!=null&&networkInfo.isConnected()));
 
 
@@ -72,7 +79,19 @@ public class ConStatusFragment extends Fragment {
     public ConStatusFragment() {
         // Required empty public constructor
     }
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        mTelephonyManager.listen(mPhoneStatelistener, PhoneStateListener.LISTEN_NONE);
+    }
 
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        mTelephonyManager.listen(mPhoneStatelistener,PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+    }
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -90,6 +109,9 @@ public class ConStatusFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mPhoneStatelistener = new MyPhoneStateListener();
+        mTelephonyManager = (TelephonyManager) getActivity().getSystemService(Context.TELEPHONY_SERVICE);
+        mTelephonyManager.listen(mPhoneStatelistener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
 
     }
 
@@ -115,7 +137,7 @@ public class ConStatusFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
-
+            txtSignalStr = (TextView)getActivity().findViewById(R.id.signalStrength);
             bluetooth = (CheckedTextView) getActivity().findViewById(R.id.checkedBluetooth);
             wifi = (CheckedTextView) getActivity().findViewById(R.id.checkedwifi);
             mobile = (CheckedTextView) getActivity().findViewById(R.id.checkedmobiledata);
@@ -126,6 +148,8 @@ public class ConStatusFragment extends Fragment {
             filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 
             context.registerReceiver(mReceiver, new IntentFilter(filter));
+
+
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -151,5 +175,17 @@ public class ConStatusFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+    class MyPhoneStateListener extends PhoneStateListener {
+
+        @Override
+        public void onSignalStrengthsChanged(SignalStrength signalStrength) {
+            super.onSignalStrengthsChanged(signalStrength);
+            mSignalStrength = signalStrength.getGsmSignalStrength();
+          //  mSignalStrength = (2 * mSignalStrength) - 113; // -> dBm
+            txtSignalStr = (TextView)getActivity().findViewById(R.id.signalStrength);
+            txtSignalStr.setText("Signal Strength : " +mSignalStrength );
+        }
+
     }
 }

@@ -9,6 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="20px"
         android:orientation="vertical"
         android:weightSum="1">
 
@@ -23,7 +24,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.03"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="5px">
 
             <TextView
                 android:id="@+id/bluetooth"
@@ -38,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:checkMark="@drawable/ic_bluetooth_black_24dp"
                 android:checked="true"
-                android:text="CheckedTextView"
+                android:text="ON"
                 tools:text="ON" />
         </LinearLayout>
 
@@ -46,8 +48,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="30px"
+            android:layout_weight="0.03"
             android:orientation="horizontal"
-            android:layout_weight="0.03">
+            android:padding="5px">
 
             <TextView
                 android:id="@+id/Wifi"
@@ -67,7 +70,8 @@
             android:layout_width="match_parent"
             android:layout_height="30px"
             android:layout_weight="0.03"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="5px">
 
             <TextView
                 android:id="@+id/mobile_data"
@@ -83,6 +87,18 @@
                 android:checkMark="@drawable/mobile_data"
                 android:text="ON" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/signalStrength"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="signal" />
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.03" />
 
 
     </LinearLayout>

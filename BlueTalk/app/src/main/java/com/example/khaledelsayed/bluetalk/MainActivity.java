@@ -10,10 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 
+
 public class MainActivity extends AppCompatActivity
-implements ChatsFragment.OnFragmentInteractionListener,HomeFragment.OnFragmentInteractionListener,ConStatusFragment.OnFragmentInteractionListener{
+implements HomeFragment.OnFragmentInteractionListener,ConStatusFragment.OnFragmentInteractionListener,ChatFragment.OnFragmentInteractionListener,ChatsFragment.OnListFragmentInteractionListener{
 
-
+public String MyName="khaled";
  public  void onFragmentInteraction(Uri uri){
 
     }
@@ -56,4 +57,12 @@ implements ChatsFragment.OnFragmentInteractionListener,HomeFragment.OnFragmentIn
       navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
+
+    @Override
+    public void onListFragmentInteraction(DataUser item) {
+        Fragment selectedFragment = ChatFragment.newInstance(item.name);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.content, selectedFragment);
+        transaction.commit();
+    }
 }
