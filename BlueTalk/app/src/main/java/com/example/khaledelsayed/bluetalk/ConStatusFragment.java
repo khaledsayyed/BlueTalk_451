@@ -40,7 +40,7 @@ public class ConStatusFragment extends Fragment {
     private CheckedTextView bluetooth,wifi,mobile;
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive (Context context, Intent intent) {
-            bluetooth = (CheckedTextView) getActivity().findViewById(R.id.checkedBluetooth);
+           bluetooth = (CheckedTextView) getActivity().findViewById(R.id.checkedBluetooth);
             wifi = (CheckedTextView) getActivity().findViewById(R.id.checkedwifi);
             mobile = (CheckedTextView) getActivity().findViewById(R.id.checkedmobiledata);
             BluetoothAdapter Adapter = BluetoothAdapter.getDefaultAdapter();

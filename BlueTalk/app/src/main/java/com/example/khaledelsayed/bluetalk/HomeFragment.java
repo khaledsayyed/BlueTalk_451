@@ -9,7 +9,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toolbar;
+import android.widget.ListAdapter;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
+import android.os.AsyncTask;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
@@ -23,9 +38,11 @@ import android.widget.Toolbar;
  */
 public class HomeFragment extends Fragment {
 
-    String JsonURL= "http://localhost/dumdata.json";
+   // String JsonURL= "http://localhost/dumdata.json";
+    TextView  mError;
+    private String TAG = HomeFragment.class.getSimpleName();
     ListView lv;
-
+    ArrayList<HashMap<String, String>> contactList;
     private OnFragmentInteractionListener mListener;
 
     public HomeFragment() {
@@ -52,11 +69,103 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        contactList = new ArrayList<>();
+        lv=(ListView)getActivity().findViewById(R.id.lv);
 
+        new GetContacts().execute();
+
+      //  mError = (TextView) getActivity().findViewById(R.id.error);
       /*   if (getArguments() != null) {
            mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }*/
+
+    }
+
+    private class GetContacts extends AsyncTask<Void,Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Toast.makeText(getActivity(), "Json Data is downloading", Toast.LENGTH_LONG).show();
+
+        }
+
+
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            HttpHandler sh = new HttpHandler();
+            // Making a request to url and getting response
+            String url = "http://localhost/dumdata.json";
+            String jsonStr = sh.makeServiceCall(url);
+
+         //Log.e(TAG, "Response from url: " + jsonStr);
+            if (jsonStr != null) {
+                try {
+                    JSONObject jsonObj = new JSONObject(jsonStr);
+
+                    // Getting JSON Array node
+                    JSONArray channels = jsonObj.getJSONArray("channel");
+
+                    // looping through All Contacts
+                    for (int i = 0; i < channels.length(); i++) {
+                        JSONObject c = channels.getJSONObject(i);
+                        String id = c.getString("id");
+                       String name = c.getString("channel_name");
+                      /*  String email = c.getString("email");
+                        String address = c.getString("address");
+                        String gender = c.getString("gender");*/
+
+                   /*     // Phone node is JSON Object
+                        JSONObject phone = c.getJSONObject("phone");
+                        String mobile = phone.getString("mobile");
+                        String home = phone.getString("home");
+                        String office = phone.getString("office");*/
+
+                        // tmp hash map for single contact
+                        HashMap<String, String> chan = new HashMap<>();
+
+                        // adding each child node to HashMap key => value
+                        chan.put("id",id);
+                        chan.put("channel_name",name);
+
+
+                        // adding contact to contact list
+                        contactList.add(chan);
+                    }
+                } catch (final JSONException e) {
+                  //  Log.e(TAG, "Json parsing error: " + e.getMessage());
+                    getActivity().runOnUiThread (new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getContext(),"Json parsing error: " + e.getMessage(),Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+                }
+
+            } else {
+              //  Log.e(TAG, "Couldn't get json from server.");
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getContext(),
+                                "Couldn't get json from server. Check LogCat for possible errors!",
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            ListAdapter adapter = new SimpleAdapter(getActivity(), contactList, R.layout.list_item, new String[]{"id", "channel_name"},
+                    new int[]{R.id.id, R.id.channel_name});
+            lv=(ListView)getActivity().findViewById(R.id.lv);
+            lv.setAdapter(adapter);
+        }
 
     }
 
@@ -65,9 +174,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        lv=(ListView)getActivity().findViewById(R.id.khaldon);
 
-        new JSONDownloader(getActivity(), JsonURL,lv).execute();
 
         // Inflate the layout for this fragment
 
