@@ -5,6 +5,13 @@ package com.example.khaledelsayed.bluetalk;
  */
 
 public class DataMessage {
+    DataMessage(){
+
+    }
+    DataMessage(String msj,String sen){
+        message = msj;
+        sender = sen;
+    }
     public  String message;
     public String sender;
 }

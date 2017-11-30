@@ -231,7 +231,8 @@ public class ChatsFragment extends Fragment {
                 recyclerView.setLayoutManager(new LinearLayoutManager(ChatsFragment.this.getActivity()));
 
             } catch (JSONException e) {
-                Toast.makeText(ChatsFragment.this.getActivity(), e.toString(), Toast.LENGTH_LONG).show();
+//                Toast.makeText(ChatsFragment.this.getActivity(), e.toString(), Toast.LENGTH_LONG).show();
+                e.printStackTrace();
             }
 
         }
