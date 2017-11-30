@@ -104,14 +104,16 @@ public class MychannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         public MyHolder(View view, int viewType) {
             super(view);
             mView = view;
-
+            nameView = (TextView) view.findViewById(R.id.channel_name);
+            idView = (TextView) view.findViewById(R.id.channelid);
+            numofusersView = (TextView) view.findViewById(R.id.number_of_users);
             if(viewType==0) {
-                nameView = (TextView) view.findViewById(R.id.channel_name);
-                idView = (TextView) view.findViewById(R.id.channelid);
-                numofusersView = (TextView) view.findViewById(R.id.number_of_users);
+
                 buttonjoin= (Button) view.findViewById(R.id.buttonjoin);
             }
             else if(viewType==1){
+
+                buttoncreate= (Button) view.findViewById(R.id.buttoncreate);
 
             }
         }
