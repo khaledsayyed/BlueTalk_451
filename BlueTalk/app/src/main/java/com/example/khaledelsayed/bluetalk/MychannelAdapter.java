@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import com.example.khaledelsayed.bluetalk.HomeFragment.OnFragmentcInteractionListener;
 import java.util.Collections;
@@ -33,11 +34,18 @@ public class MychannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 }
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view=inflater.inflate(R.layout.fragment_channelinfo, parent,false);
+        View view=null;
+        if( viewType==0) {
+           view = inflater.inflate(R.layout.fragment_channelinfo, parent, false);
+        }
+        else if (viewType==1){
+            view = inflater.inflate(R.layout.fragment_channelinfo_create, parent, false);
+        }
         MyHolder holder=new MyHolder(view);
         return holder;
 
     }
+    @Override
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
@@ -86,18 +94,26 @@ public class MychannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public class MyHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public DataChannel mItem;
-        public final TextView idView;
-        public final TextView nameView;
-        public final TextView numofusersView;
+        public  TextView idView =null;
+        public  TextView nameView= null;
+        public  TextView numofusersView=null;
+        public  Button buttonjoin=null;
+        public  Button buttoncreate = null;
 
 
-        public MyHolder(View view) {
+        public MyHolder(View view, int viewType) {
             super(view);
             mView = view;
 
-            nameView = (TextView) view.findViewById(R.id.channel_name);
-            idView = (TextView) view.findViewById(R.id.channelid);
-            numofusersView= (TextView) view.findViewById(R.id.number_of_users);
+            if(viewType==0) {
+                nameView = (TextView) view.findViewById(R.id.channel_name);
+                idView = (TextView) view.findViewById(R.id.channelid);
+                numofusersView = (TextView) view.findViewById(R.id.number_of_users);
+                buttonjoin= (Button) view.findViewById(R.id.buttonjoin);
+            }
+            else if(viewType==1){
+
+            }
         }
 
     }
