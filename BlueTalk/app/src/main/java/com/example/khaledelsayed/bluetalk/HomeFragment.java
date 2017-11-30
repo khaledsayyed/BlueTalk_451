@@ -1,36 +1,38 @@
 package com.example.khaledelsayed.bluetalk;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toolbar;
-import android.widget.ListAdapter;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
-import android.os.AsyncTask;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link HomeFragment.OnFragmentInteractionListener} interface
+ * {@link HomeFragment.OnFragmentcInteractionListener} interface
  * to handle interaction events.
  * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -38,12 +40,20 @@ import java.util.HashMap;
  */
 public class HomeFragment extends Fragment {
 
-   // String JsonURL= "http://localhost/dumdata.json";
-    TextView  mError;
-    private String TAG = HomeFragment.class.getSimpleName();
-    ListView lv;
-    ArrayList<HashMap<String, String>> contactList;
-    private OnFragmentInteractionListener mListener;
+
+ // TODO: Customize parameter argument names
+ private static final String ARG_COLUMN_COUNT = "column-count";
+    // TODO: Customize parameters
+    private int mColumnCount = 1;
+    private OnFragmentcInteractionListener mListener;
+
+    public static final int CONNECTION_TIMEOUT = 10000;
+    public static final int READ_TIMEOUT = 15000;
+    private RecyclerView recyclerView;
+    private MychannelAdapter mychannelAdapter;
+
+
+    /**
 
     public HomeFragment() {
         // Required empty public constructor
@@ -69,10 +79,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        contactList = new ArrayList<>();
-        lv=(ListView)getActivity().findViewById(R.id.lv);
-
-        new GetContacts().execute();
 
       //  mError = (TextView) getActivity().findViewById(R.id.error);
       /*   if (getArguments() != null) {
@@ -82,117 +88,24 @@ public class HomeFragment extends Fragment {
 
     }
 
-    private class GetContacts extends AsyncTask<Void,Void, Void> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            Toast.makeText(getActivity(), "Json Data is downloading", Toast.LENGTH_LONG).show();
-
-        }
-
-
-        @Override
-        protected Void doInBackground(Void... arg0) {
-            HttpHandler sh = new HttpHandler();
-            // Making a request to url and getting response
-            String url = "http://localhost/dumdata.json";
-            String jsonStr = sh.makeServiceCall(url);
-
-         //Log.e(TAG, "Response from url: " + jsonStr);
-            if (jsonStr != null) {
-                try {
-                    JSONObject jsonObj = new JSONObject(jsonStr);
-
-                    // Getting JSON Array node
-                    JSONArray channels = jsonObj.getJSONArray("channel");
-
-                    // looping through All Contacts
-                    for (int i = 0; i < channels.length(); i++) {
-                        JSONObject c = channels.getJSONObject(i);
-                        String id = c.getString("id");
-                       String name = c.getString("channel_name");
-                      /*  String email = c.getString("email");
-                        String address = c.getString("address");
-                        String gender = c.getString("gender");*/
-
-                   /*     // Phone node is JSON Object
-                        JSONObject phone = c.getJSONObject("phone");
-                        String mobile = phone.getString("mobile");
-                        String home = phone.getString("home");
-                        String office = phone.getString("office");*/
-
-                        // tmp hash map for single contact
-                        HashMap<String, String> chan = new HashMap<>();
-
-                        // adding each child node to HashMap key => value
-                        chan.put("id",id);
-                        chan.put("channel_name",name);
-
-
-                        // adding contact to contact list
-                        contactList.add(chan);
-                    }
-                } catch (final JSONException e) {
-                  //  Log.e(TAG, "Json parsing error: " + e.getMessage());
-                    getActivity().runOnUiThread (new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getContext(),"Json parsing error: " + e.getMessage(),Toast.LENGTH_LONG).show();
-                        }
-                    });
-
-                }
-
-            } else {
-              //  Log.e(TAG, "Couldn't get json from server.");
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getContext(),
-                                "Couldn't get json from server. Check LogCat for possible errors!",
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            ListAdapter adapter = new SimpleAdapter(getActivity(), contactList, R.layout.list_item, new String[]{"id", "channel_name"},
-                    new int[]{R.id.id, R.id.channel_name});
-            lv=(ListView)getActivity().findViewById(R.id.lv);
-            lv.setAdapter(adapter);
-        }
-
-    }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        View view =inflater.inflate(R.layout.fragment_home, container, false);
+     new AsyncFetch().execute();
+        return view;
 
-
-        // Inflate the layout for this fragment
-
-        return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnFragmentcInteractionListener) {
+            mListener = (OnFragmentcInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -205,18 +118,131 @@ public class HomeFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
+    public interface OnFragmentcInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onFragmentcInteraction(DataChannel dataChannel);
     }
+
+    private class AsyncFetch extends AsyncTask<String, String, String> {
+        ProgressDialog pdLoading = new ProgressDialog(HomeFragment.this.getActivity());
+        HttpURLConnection conn;
+        URL url = null;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            //this method will be running on UI thread
+            pdLoading.setMessage("\tLoading...");
+            pdLoading.setCancelable(false);
+            pdLoading.show();
+
+        }
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+
+                url = new URL("https://451data.000webhostapp.com/dumdata.json");
+
+            } catch (MalformedURLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return e.toString();
+            }
+            try {
+
+                // Setup HttpURLConnection class to send and receive data from php and mysql
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(READ_TIMEOUT);
+                conn.setConnectTimeout(CONNECTION_TIMEOUT);
+                conn.setRequestMethod("GET");
+
+                // setDoOutput to true as we recieve data from json file
+                conn.setDoOutput(true);
+
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+                return e1.toString();
+            }
+            try {
+
+                int response_code = conn.getResponseCode();
+
+                // Check if successful connection made
+                if (response_code == HttpURLConnection.HTTP_OK) {
+
+                    // Read data sent from server
+                    InputStream input = conn.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+                    StringBuilder result = new StringBuilder();
+                    String line;
+
+                    while ((line = reader.readLine()) != null) {
+                        result.append(line);
+                    }
+
+                    // Pass data to onPostExecute method
+                    return (result.toString());
+
+                } else {
+
+                    return ("unsuccessful");
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                return e.toString();
+            } finally {
+                conn.disconnect();
+            }
+
+        }
+        @Override
+        protected void onPostExecute(String result) {
+
+            //this method will be running on UI thread
+
+            pdLoading.dismiss();
+            List<DataChannel> data=new ArrayList<>();
+
+            pdLoading.dismiss();
+
+            try {
+
+
+
+                JSONArray jArray = new JSONArray(result);
+
+                // Extract data from json and store into ArrayList as class objects
+                for(int i=0;i<jArray.length();i++){
+                    JSONObject json_data = jArray.getJSONObject(i);
+                    DataChannel channelData = new DataChannel();
+                    channelData.channelid = json_data.getInt("id");
+                    channelData.channel_name = json_data.getString("channel_name");
+                    channelData.number_of_users = json_data.getInt("number_of_users");
+
+                    data.add(channelData);
+
+                }
+
+                // Setup and Handover data to recyclerview
+                recyclerView = (RecyclerView)HomeFragment.this.getActivity().findViewById(R.id.lv);
+                mychannelAdapter = new MychannelAdapter(mListener,HomeFragment.this.getActivity(),data);
+                recyclerView.setAdapter(mychannelAdapter);
+                recyclerView.setLayoutManager(new LinearLayoutManager(HomeFragment.this.getActivity()));
+                recyclerView.addItemDecoration(new DividerItemDecoration(HomeFragment.this.getActivity()));
+
+            } catch (JSONException e) {
+                Toast.makeText(HomeFragment.this.getActivity(), e.toString(), Toast.LENGTH_LONG).show();
+            }
+
+        }
+
+    }
+
+
+
+
+
+
 }

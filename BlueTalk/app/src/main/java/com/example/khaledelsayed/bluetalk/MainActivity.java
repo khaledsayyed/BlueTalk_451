@@ -31,7 +31,7 @@ import okhttp3.Response;
 
 
 public class MainActivity extends AppCompatActivity
-implements HomeFragment.OnFragmentInteractionListener,ConStatusFragment.OnFragmentInteractionListener,ChatFragment.OnFragmentInteractionListener,ChatsFragment.OnListFragmentInteractionListener{
+implements HomeFragment.OnFragmentcInteractionListener,ConStatusFragment.OnFragmentInteractionListener,ChatFragment.OnFragmentInteractionListener,ChatsFragment.OnListFragmentInteractionListener{
 
 public String MyName="khaled";
     public MyMessageAdapter myMessageAdapter;
@@ -90,10 +90,15 @@ public String MyName="khaled";
 
     @Override
     public void onListFragmentInteraction(DataUser item) {
-        Fragment selectedFragment = ChatFragment.newInstance(item.name);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.content, selectedFragment);
-        transaction.commit();
+    Fragment selectedFragment = ChatFragment.newInstance(item.name);
+    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    transaction.replace(R.id.content, selectedFragment);
+    transaction.commit();
+}
+
+    @Override
+    public void onFragmentcInteraction(DataChannel dataChannel) {
+
     }
 
     ProgressDialog progress;
