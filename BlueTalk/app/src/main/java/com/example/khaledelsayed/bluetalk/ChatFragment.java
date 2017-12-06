@@ -395,7 +395,6 @@ public class ChatFragment extends Fragment {
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(READ_TIMEOUT);
                 conn.setConnectTimeout(CONNECTION_TIMEOUT);
-                conn.setRequestMethod("GET");
 
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("USER-AGENT", "Mozilla/5.0");

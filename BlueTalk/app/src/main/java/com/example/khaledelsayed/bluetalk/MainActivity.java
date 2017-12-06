@@ -13,9 +13,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
+<<<<<<< HEAD
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+=======
+import android.widget.Button;
+import android.widget.EditText;
+>>>>>>> origin/master
 
 import com.nbsp.materialfilepicker.ui.FilePickerActivity;
 
@@ -48,10 +53,25 @@ import static com.example.khaledelsayed.bluetalk.HomeFragment.READ_TIMEOUT;
 
 
 public class MainActivity extends AppCompatActivity
-implements HomeFragment.OnFragmentcInteractionListener,ConStatusFragment.OnFragmentInteractionListener,ChatFragment.OnFragmentInteractionListener,ChatsFragment.OnListFragmentInteractionListener{
+implements HomeFragment.OnFragmentcInteractionListener,ConStatusFragment.OnFragmentInteractionListener,ChatFragment.OnFragmentInteractionListener,ChatsFragment.OnListFragmentInteractionListener,SignUp.SignupInterface{
 
 public String MyName="khaled";
+<<<<<<< HEAD
 public int PhoneNumber;
+=======
+    public String userName;
+    public int mobile_num;
+
+    public  void sign_the_user_up(String user,int mobile){
+        userName=user;
+        mobile_num= mobile;
+       HomeFragment home = HomeFragment.newInstance();
+        // send the params to server get ...
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.content, home);
+        transaction.commit();
+    }
+>>>>>>> origin/master
     public MyMessageAdapter myMessageAdapter;
  public  void onFragmentInteraction(Uri uri){
 
