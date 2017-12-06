@@ -12,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.webkit.MimeTypeMap;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.nbsp.materialfilepicker.ui.FilePickerActivity;
 
@@ -31,9 +33,21 @@ import okhttp3.Response;
 
 
 public class MainActivity extends AppCompatActivity
-implements HomeFragment.OnFragmentcInteractionListener,ConStatusFragment.OnFragmentInteractionListener,ChatFragment.OnFragmentInteractionListener,ChatsFragment.OnListFragmentInteractionListener{
+implements HomeFragment.OnFragmentcInteractionListener,ConStatusFragment.OnFragmentInteractionListener,ChatFragment.OnFragmentInteractionListener,ChatsFragment.OnListFragmentInteractionListener,SignUp.SignupInterface{
 
 public String MyName="khaled";
+    public String userName;
+    public int mobile_num;
+
+    public  void sign_the_user_up(String user,int mobile){
+        userName=user;
+        mobile_num= mobile;
+       HomeFragment home = HomeFragment.newInstance();
+        // send the params to server get ...
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.content, home);
+        transaction.commit();
+    }
     public MyMessageAdapter myMessageAdapter;
  public  void onFragmentInteraction(Uri uri){
 
