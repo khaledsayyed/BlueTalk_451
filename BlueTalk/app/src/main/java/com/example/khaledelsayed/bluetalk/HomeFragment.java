@@ -121,6 +121,9 @@ public class HomeFragment extends Fragment {
     public interface OnFragmentcInteractionListener {
         // TODO: Update argument type and name
         void onFragmentcInteraction(DataChannel dataChannel);
+        void onCreatePiconet( int ChannelId);
+        void onJoinPiconet(int ChannelId);
+
     }
 
     private class AsyncFetch extends AsyncTask<String, String, String> {
@@ -218,8 +221,10 @@ public class HomeFragment extends Fragment {
                     JSONObject json_data = jArray.getJSONObject(i);
                     DataChannel channelData = new DataChannel();
                     channelData.channelid = json_data.getInt("id");
-                    channelData.channel_name = json_data.getString("channel_name");
+                    channelData.channel_name = json_data.getString("name");
                     channelData.number_of_users = json_data.getInt("number_of_users");
+                    channelData.piconetid= json_data.getInt("piconet_id");
+                    channelData.timer= json_data.getString("created_at");
 
                     data.add(channelData);
 

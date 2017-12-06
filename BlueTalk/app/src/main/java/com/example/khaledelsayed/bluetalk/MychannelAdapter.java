@@ -41,21 +41,26 @@ public class MychannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         else if (viewType==1){
             view = inflater.inflate(R.layout.fragment_channelinfo_create, parent, false);
         }
-        MyHolder holder=new MyHolder(view);
+        MyHolder holder=new MyHolder(view, viewType);
         return holder;
 
     }
     @Override
+    public int getItemViewType (int position){
 
+        if(data.get(position).piconetid== 0)  return 0;
+        else return 1;
+    }
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final MyHolder myHolder= (MyHolder) holder;
         DataChannel current=data.get(position);
 
-        myHolder.idView.setText(String.valueOf(current.channelid));
+
         myHolder.nameView.setText(current.channel_name);
         myHolder.numofusersView.setText(String.valueOf(current.number_of_users));
-        myHolder.mItem = current;
+        myHolder.timerView.setText(current.timer);
+        myHolder.id = current.channelid;
 
         // load image into imageview using glide
         /*may be implemented later
@@ -94,26 +99,38 @@ public class MychannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public class MyHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public DataChannel mItem;
-        public  TextView idView =null;
         public  TextView nameView= null;
         public  TextView numofusersView=null;
         public  Button buttonjoin=null;
         public  Button buttoncreate = null;
+        public TextView timerView=null;
+        public int id;
 
 
         public MyHolder(View view, int viewType) {
             super(view);
             mView = view;
             nameView = (TextView) view.findViewById(R.id.channel_name);
-            idView = (TextView) view.findViewById(R.id.channelid);
-            numofusersView = (TextView) view.findViewById(R.id.number_of_users);
+
+           timerView = (TextView) view.findViewById(R.id.timer);
             if(viewType==0) {
 
                 buttonjoin= (Button) view.findViewById(R.id.buttonjoin);
+                buttonjoin.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        // Code here executes on main thread after user presses button
+                        mListener.onJoinPiconet(id);
+                    }
+                });
             }
             else if(viewType==1){
 
                 buttoncreate= (Button) view.findViewById(R.id.buttoncreate);
+                buttoncreate.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        mListener.onCreatePiconet(id);
+                    }
+                });
 
             }
         }

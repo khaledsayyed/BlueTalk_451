@@ -9,5 +9,7 @@ public class DataChannel {
     public String channel_name;
     public int number_of_users;
     public int channelid;
+    public int piconetid;
+    public String timer;
 
 }
