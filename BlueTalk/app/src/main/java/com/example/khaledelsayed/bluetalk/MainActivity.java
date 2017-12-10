@@ -3,6 +3,7 @@ package com.example.khaledelsayed.bluetalk;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -13,14 +14,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
-<<<<<<< HEAD
+
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-=======
+
 import android.widget.Button;
 import android.widget.EditText;
->>>>>>> origin/master
+
 
 import com.nbsp.materialfilepicker.ui.FilePickerActivity;
 
@@ -56,9 +58,8 @@ public class MainActivity extends AppCompatActivity
 implements HomeFragment.OnFragmentcInteractionListener,ConStatusFragment.OnFragmentInteractionListener,ChatFragment.OnFragmentInteractionListener,ChatsFragment.OnListFragmentInteractionListener,SignUp.SignupInterface{
 
 public String MyName="khaled";
-<<<<<<< HEAD
 public int PhoneNumber;
-=======
+
     public String userName;
     public int mobile_num;
 
@@ -71,7 +72,7 @@ public int PhoneNumber;
         transaction.replace(R.id.content, home);
         transaction.commit();
     }
->>>>>>> origin/master
+
     public MyMessageAdapter myMessageAdapter;
  public  void onFragmentInteraction(Uri uri){
 
@@ -90,7 +91,7 @@ public int PhoneNumber;
       } catch (MalformedURLException e) {
           // TODO Auto-generated catch block
           e.printStackTrace();
-          //   return e.toString();
+          //  return e.toString();
       }
       try {
 
@@ -100,7 +101,7 @@ public int PhoneNumber;
           conn.setReadTimeout(READ_TIMEOUT);
           conn.setConnectTimeout(CONNECTION_TIMEOUT);
 
-          conn.setRequestMethod("POST");
+          conn.setRequestMethod("GET");
           conn.setRequestProperty("USER-AGENT", "Mozilla/5.0");
           conn.setRequestProperty("ACCEPT-LANGUAGE", "en-US,en;0.5");
 
@@ -110,10 +111,11 @@ public int PhoneNumber;
       } catch (IOException e1) {
           // TODO Auto-generated catch block
           e1.printStackTrace();
-          //return e1.toString();
+          return e1.toString();
       }
       try {
-      //    String urlParameters = "Channel="+ChannelId+"&Master="+71226125+"&Timer="+null+"&Name=Stars";
+         String urlParameters = "";
+          // "Channel="+ChannelId+"&Master="+71226125+"&Timer="+null+"&Name=Stars";
           DataOutputStream outputPost = new DataOutputStream(conn.getOutputStream());
           outputPost.writeBytes(urlParameters);
           outputPost.flush();
@@ -123,65 +125,86 @@ public int PhoneNumber;
 
       } catch (IOException e) {
           e.printStackTrace();
-          //  return e.toString();
+           return e.toString();
       } finally {
           conn.disconnect();
       }
       // return ("success");
   }
-public void onCreatePiconet(int ChannelId){
+public void onCreatePiconet(int ChannelId) {
+    new AsyncFetch().execute();
 
-    HttpURLConnection conn=null;
-    URL url = null;
-
-    try {
-
-        url = new URL("https://bluetalk.herokuapp.com/piconets/new");//?username1="+MyName+"+username2="+mUser
-
-
-    } catch (MalformedURLException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-     //   return e.toString();
-    }
-    try {
-
-        // Setup HttpURLConnection class to send and receive data from php and mysql
-        conn = (HttpURLConnection) url.openConnection();
-
-        conn.setReadTimeout(READ_TIMEOUT);
-        conn.setConnectTimeout(CONNECTION_TIMEOUT);
-
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("USER-AGENT", "Mozilla/5.0");
-        conn.setRequestProperty("ACCEPT-LANGUAGE", "en-US,en;0.5");
-
-
-        conn.setDoOutput(true);
-
-    } catch (IOException e1) {
-        // TODO Auto-generated catch block
-        e1.printStackTrace();
-        //return e1.toString();
-    }
-    try {
-        String urlParameters = "Channel="+ChannelId+"&Master="+71226125+"&Timer="+null+"&Name=Stars";
-        DataOutputStream outputPost = new DataOutputStream(conn.getOutputStream());
-        outputPost.writeBytes(urlParameters);
-        outputPost.flush();
-        outputPost.close();
-//                conn.setFixedLengthStreamingMode(urlParameters.getBytes().length);
-        //               conn.setChunkedStreamingMode(0);
-
-    } catch (IOException e) {
-        e.printStackTrace();
-      //  return e.toString();
-    } finally {
-        conn.disconnect();
-    }
-   // return ("success");
 }
+    /************************************************************/
+    private class AsyncFetch extends AsyncTask<String, String, String> {
+        ProgressDialog pdLoading = new ProgressDialog(MainActivity.this);
+        HttpURLConnection conn;
+        URL url = null;
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            //this method will be running on UI thread
+            pdLoading.setMessage("\tLoading...");
+            pdLoading.setCancelable(false);
+            pdLoading.show();
+
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+
+                url = new URL("https://bluetalk.herokuapp.com/piconets/new");//?username1="+MyName+"+username2="+mUser
+
+
+            } catch (MalformedURLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return e.toString();
+            }
+            try {
+
+                // Setup HttpURLConnection class to send and receive data from php and mysql
+                conn = (HttpURLConnection) url.openConnection();
+
+                conn.setReadTimeout(READ_TIMEOUT);
+                conn.setConnectTimeout(CONNECTION_TIMEOUT);
+
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("USER-AGENT", "Mozilla/5.0");
+                conn.setRequestProperty("ACCEPT-LANGUAGE", "en-US,en;0.5");
+
+
+                //  conn.setDoOutput(true);
+
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+                return e1.toString();
+            }
+            try {
+                String urlParameters = "Channel="+ChannelId+"&Master=71226125&Timer=null&Name=Stars";
+
+                DataOutputStream outputPost = new DataOutputStream(conn.getOutputStream());
+                outputPost.writeBytes(urlParameters);
+                outputPost.flush();
+                outputPost.close();
+//                conn.setFixedLengthStreamingMode(urlParameters.getBytes().length);
+                //               conn.setChunkedStreamingMode(0);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                return e.toString();
+            } finally {
+                conn.disconnect();
+            }
+            return ("success");
+        }
+
+
+    }
 
 
 
