@@ -3,6 +3,7 @@ package com.example.khaledelsayed.bluetalk;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -21,8 +22,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -37,13 +42,16 @@ implements HomeFragment.OnFragmentcInteractionListener,ConStatusFragment.OnFragm
 
 public String MyName="khaled";
     public String userName;
+    public static final int CONNECTION_TIMEOUT = 10000;
+    public static final int READ_TIMEOUT = 15000;
     public int mobile_num;
 
+    public boolean logged_in=false;
     public  void sign_the_user_up(String user,int mobile){
         userName=user;
         mobile_num= mobile;
        HomeFragment home = HomeFragment.newInstance();
-        // send the params to server get ...
+        new signupasync(userName,mobile).execute();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.content, home);
         transaction.commit();
@@ -61,7 +69,7 @@ public String MyName="khaled";
             Fragment selectedFragment = null;
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    selectedFragment = HomeFragment.newInstance();
+                    selectedFragment = logged_in?HomeFragment.newInstance():SignUp.newInstance();
                     break;
                 case R.id.navigation_status:
                     selectedFragment = ConStatusFragment.newInstance();
@@ -73,6 +81,7 @@ public String MyName="khaled";
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.content, selectedFragment);
             transaction.commit();
+            logged_in=true;
             return true;
         }
 
@@ -84,7 +93,7 @@ public String MyName="khaled";
        setContentView(R.layout.activity_main);
 
    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.content, HomeFragment.newInstance());
+        transaction.replace(R.id.content,  logged_in?HomeFragment.newInstance():SignUp.newInstance());
        transaction.addToBackStack(null);
     transaction.commit();
       BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -179,5 +188,67 @@ public String MyName="khaled";
         String extension = MimeTypeMap.getFileExtensionFromUrl(path);
 
         return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+    }
+    private class signupasync extends AsyncTask<String, String,String> {
+
+        signupasync(String name,int id){
+            mName=name;
+            mId = id;
+        }
+        String mName;
+        int mId;
+        HttpURLConnection conn;
+        URL url = null;
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+
+                url = new URL("https://bluetalk.herokuapp.com/users");//?username1="+MyName+"+username2="+mUser
+
+
+            } catch (MalformedURLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return e.toString();
+            }
+            try {
+
+                // Setup HttpURLConnection class to send and receive data from php and mysql
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(READ_TIMEOUT);
+                conn.setConnectTimeout(CONNECTION_TIMEOUT);
+
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("USER-AGENT", "Mozilla/5.0");
+                conn.setRequestProperty("ACCEPT-LANGUAGE", "en-US,en;0.5");
+
+
+                conn.setDoOutput(true);
+
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+                return e1.toString();
+            }
+            try {
+                String urlParameters = "name="+mName+"&phone_number="+mId;
+                DataOutputStream outputPost = new DataOutputStream(conn.getOutputStream());
+                outputPost.writeBytes(urlParameters);
+                outputPost.flush();
+                outputPost.close();
+//                conn.setFixedLengthStreamingMode(urlParameters.getBytes().length);
+                //               conn.setChunkedStreamingMode(0);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                return e.toString();
+            } finally {
+                conn.disconnect();
+            }
+            return ("success");
+        }
+
+
     }
 }

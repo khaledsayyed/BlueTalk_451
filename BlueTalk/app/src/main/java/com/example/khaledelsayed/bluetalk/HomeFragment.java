@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -141,7 +142,7 @@ public class HomeFragment extends Fragment {
         protected String doInBackground(String... params) {
             try {
 
-                url = new URL("https://451data.000webhostapp.com/dumdata.json");
+                url = new URL("https://bluetalk.herokuapp.com/channels.json");
 
             } catch (MalformedURLException e) {
                 // TODO Auto-generated catch block
@@ -153,11 +154,11 @@ public class HomeFragment extends Fragment {
                 // Setup HttpURLConnection class to send and receive data from php and mysql
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(READ_TIMEOUT);
-                conn.setConnectTimeout(CONNECTION_TIMEOUT);
+               conn.setConnectTimeout(CONNECTION_TIMEOUT);
                 conn.setRequestMethod("GET");
 
                 // setDoOutput to true as we recieve data from json file
-                conn.setDoOutput(true);
+           //     conn.setDoOutput(true);
 
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
@@ -169,7 +170,7 @@ public class HomeFragment extends Fragment {
                 int response_code = conn.getResponseCode();
 
                 // Check if successful connection made
-                if (response_code == HttpURLConnection.HTTP_OK) {
+                if (response_code == HttpURLConnection.HTTP_OK ||response_code ==422) {
 
                     // Read data sent from server
                     InputStream input = conn.getInputStream();
@@ -192,13 +193,14 @@ public class HomeFragment extends Fragment {
             } catch (IOException e) {
                 e.printStackTrace();
                 return e.toString();
-            } finally {
+            }
+            finally {
                 conn.disconnect();
             }
 
         }
         @Override
-        protected void onPostExecute(String result) {
+            protected void onPostExecute(String result) {
 
             //this method will be running on UI thread
 
@@ -218,8 +220,8 @@ public class HomeFragment extends Fragment {
                     JSONObject json_data = jArray.getJSONObject(i);
                     DataChannel channelData = new DataChannel();
                     channelData.channelid = json_data.getInt("id");
-                    channelData.channel_name = json_data.getString("channel_name");
-                    channelData.number_of_users = json_data.getInt("number_of_users");
+                    channelData.channel_name = json_data.getString("name");
+                //    channelData.number_of_users = json_data.getInt("number_of_users");
 
                     data.add(channelData);
 

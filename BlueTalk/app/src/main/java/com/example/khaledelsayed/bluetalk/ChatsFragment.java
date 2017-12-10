@@ -141,7 +141,7 @@ public class ChatsFragment extends Fragment {
         protected String doInBackground(String... params) {
             try {
 
-                url = new URL("https://khaled-sayed.000webhostapp.com/users.json");
+                url = new URL("https://bluetalk.herokuapp/users?piconet_id=1");//"https://khaled-sayed.000webhostapp.com/users.json");
                 //  url = new URL("http://localhost:81/users.json");
 
             } catch (MalformedURLException e) {
@@ -158,7 +158,7 @@ public class ChatsFragment extends Fragment {
                 conn.setRequestMethod("GET");
 
                 // setDoOutput to true as we recieve data from json file
-                conn.setDoOutput(true);
+        //        conn.setDoOutput(true);
 
             } catch (IOException e1) {
                 // TODO Auto-generated catch block

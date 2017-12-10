@@ -96,7 +96,7 @@ public class ChatFragment extends Fragment {
 
         public void onClick(View v) {
             DataMessage msj = new DataMessage(((EditText) getActivity().findViewById(R.id.message_to_be_sent)).getText().toString(),((MainActivity) getActivity()).MyName);
-        //send json to dima
+
             if(msj.message=="")
                 return;
             new MessageAsyncSend(msj.message,msj.sender,mUser).execute();

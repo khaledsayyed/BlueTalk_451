@@ -41,11 +41,11 @@ public class MychannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         else if (viewType==1){
             view = inflater.inflate(R.layout.fragment_channelinfo_create, parent, false);
         }
-        MyHolder holder=new MyHolder(view);
+        MyHolder holder=new MyHolder(view,viewType);
         return holder;
 
     }
-    @Override
+
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
@@ -54,7 +54,7 @@ public class MychannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         myHolder.idView.setText(String.valueOf(current.channelid));
         myHolder.nameView.setText(current.channel_name);
-        myHolder.numofusersView.setText(String.valueOf(current.number_of_users));
+     //   myHolder.numofusersView.setText(String.valueOf(current.number_of_users));
         myHolder.mItem = current;
 
         // load image into imageview using glide
@@ -106,7 +106,7 @@ public class MychannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             mView = view;
             nameView = (TextView) view.findViewById(R.id.channel_name);
             idView = (TextView) view.findViewById(R.id.channelid);
-            numofusersView = (TextView) view.findViewById(R.id.number_of_users);
+            //numofusersView = (TextView) view.findViewById(R.id.number_of_users);
             if(viewType==0) {
 
                 buttonjoin= (Button) view.findViewById(R.id.buttonjoin);
