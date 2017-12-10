@@ -2,6 +2,7 @@ package com.example.khaledelsayed.bluetalk;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -27,8 +28,14 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
+import java.net.URLConnection;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -122,12 +129,15 @@ public class HomeFragment extends Fragment {
     public interface OnFragmentcInteractionListener {
         // TODO: Update argument type and name
         void onFragmentcInteraction(DataChannel dataChannel);
+        void onCreatePiconet( int ChannelId);
+        void onJoinPiconet(int ChannelId);
+
     }
 
     private class AsyncFetch extends AsyncTask<String, String, String> {
         ProgressDialog pdLoading = new ProgressDialog(HomeFragment.this.getActivity());
         HttpURLConnection conn;
-        URL url = null;
+        URL url;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -142,7 +152,9 @@ public class HomeFragment extends Fragment {
         protected String doInBackground(String... params) {
             try {
 
-                url = new URL("https://bluetalk.herokuapp.com/channels.json");
+                String myUrl = "https://bluetalk.herokuapp.com/channels.json";
+                url = new URL(myUrl);
+                //https://bluetalk.herokuapp.com/channels.json
 
             } catch (MalformedURLException e) {
                 // TODO Auto-generated catch block
@@ -156,9 +168,9 @@ public class HomeFragment extends Fragment {
                 conn.setReadTimeout(READ_TIMEOUT);
                conn.setConnectTimeout(CONNECTION_TIMEOUT);
                 conn.setRequestMethod("GET");
-
+               // conn.connect();
                 // setDoOutput to true as we recieve data from json file
-           //     conn.setDoOutput(true);
+
 
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
@@ -168,6 +180,7 @@ public class HomeFragment extends Fragment {
             try {
 
                 int response_code = conn.getResponseCode();
+//if (response_code==200){ return ("5ara");}
 
                 // Check if successful connection made
                 if (response_code == HttpURLConnection.HTTP_OK ||response_code ==422) {
@@ -221,8 +234,25 @@ public class HomeFragment extends Fragment {
                     DataChannel channelData = new DataChannel();
                     channelData.channelid = json_data.getInt("id");
                     channelData.channel_name = json_data.getString("name");
-                //    channelData.number_of_users = json_data.getInt("number_of_users");
 
+                   // channelData.number_of_users = json_data.getInt("number_of_users");
+                    channelData.piconetid= json_data.getInt("piconet_id");
+                    String tempTime= json_data.getString("created_at");
+
+
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                    SimpleDateFormat format1 = new SimpleDateFormat("HH:mm:ss");
+                    Date date = null;
+
+                    try {
+                        date = format.parse(tempTime);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    String convertedDate = format1.format(date);
+                    channelData.timer= convertedDate;
                     data.add(channelData);
 
                 }

@@ -6,29 +6,9 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-    <TextView
-        android:id="@+id/error"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/lv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/title_home" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Create New Piconet" />
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/lv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </LinearLayout>
+        android:layout_height="match_parent" />
 
 </FrameLayout>

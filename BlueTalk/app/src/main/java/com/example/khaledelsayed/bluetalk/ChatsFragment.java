@@ -158,7 +158,7 @@ public class ChatsFragment extends Fragment {
                 conn.setRequestMethod("GET");
 
                 // setDoOutput to true as we recieve data from json file
-        //        conn.setDoOutput(true);
+
 
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
