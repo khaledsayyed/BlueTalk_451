@@ -65,6 +65,7 @@ public class MychannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         myHolder.nameView.setText(current.channel_name);
 
         myHolder.id = current.channelid;
+        myHolder.picoid=current.piconetid;
 
 
         // load image into imageview using glide
@@ -110,7 +111,7 @@ public class MychannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         public  Button buttoncreate = null;
         public TextView timerView=null;
         public int id;
-        public int piconetid;
+        public int picoid;
 
         public int vType;
 
@@ -131,7 +132,7 @@ public class MychannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 buttonjoin.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         // Code here executes on main thread after user presses button
-                        mListener.onJoinPiconet(piconetid);
+                        mListener.onJoinPiconet(picoid);
                     }
                 });
             }

@@ -237,8 +237,13 @@ public class HomeFragment extends Fragment {
 
                    // channelData.number_of_users = json_data.getInt("number_of_users");
                     channelData.piconetid= json_data.getInt("piconet_id");
-                    String tempTime= json_data.getString("created_at");
 
+                    /*************************************/
+                    if(channelData.piconetid==0){channelData.timer="";}
+                    else {
+
+
+                    String tempTime= json_data.getJSONObject("piconet").getString("created_at");
 
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
                     SimpleDateFormat format1 = new SimpleDateFormat("HH:mm:ss");
@@ -252,7 +257,8 @@ public class HomeFragment extends Fragment {
 
 
                     String convertedDate = format1.format(date);
-                    channelData.timer= convertedDate;
+                    channelData.timer= convertedDate; }
+                    /********************************/
                     data.add(channelData);
 
                 }
