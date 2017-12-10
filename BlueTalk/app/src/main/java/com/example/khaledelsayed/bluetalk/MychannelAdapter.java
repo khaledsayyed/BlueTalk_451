@@ -110,6 +110,8 @@ public class MychannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         public  Button buttoncreate = null;
         public TextView timerView=null;
         public int id;
+        public int piconetid;
+
         public int vType;
 
 
@@ -129,7 +131,7 @@ public class MychannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 buttonjoin.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         // Code here executes on main thread after user presses button
-                        mListener.onJoinPiconet(id);
+                        mListener.onJoinPiconet(piconetid);
                     }
                 });
             }
