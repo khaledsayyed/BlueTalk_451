@@ -55,18 +55,18 @@ import static com.example.khaledelsayed.bluetalk.HomeFragment.READ_TIMEOUT;
 
 
 public class MainActivity extends AppCompatActivity
-implements HomeFragment.OnFragmentcInteractionListener,ConStatusFragment.OnFragmentInteractionListener,ChatFragment.OnFragmentInteractionListener,ChatsFragment.OnListFragmentInteractionListener,SignUp.SignupInterface{
+implements HomeFragment.OnFragmentcInteractionListener,ConStatusFragment.OnFragmentInteractionListener,ChatFragment.OnFragmentInteractionListener,ChatsFragment.OnListFragmentInteractionListener,SignUp.SignupInterface {
 
-public String MyName="khaled";
-public int PhoneNumber;
+    public String MyName = "khaled";
+    public int PhoneNumber;
 
     public String userName;
     public int mobile_num;
 
-    public  void sign_the_user_up(String user,int mobile){
-        userName=user;
-        mobile_num= mobile;
-       HomeFragment home = HomeFragment.newInstance();
+    public void sign_the_user_up(String user, int mobile) {
+        userName = user;
+        mobile_num = mobile;
+        HomeFragment home = HomeFragment.newInstance();
         // send the params to server get ...
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.content, home);
@@ -74,69 +74,26 @@ public int PhoneNumber;
     }
 
     public MyMessageAdapter myMessageAdapter;
- public  void onFragmentInteraction(Uri uri){
+
+    public void onFragmentInteraction(Uri uri) {
 
     }
 
-  public void onJoinPiconet (int ChannelId){
+    public void onJoinPiconet(int PiconetId) {
 
-      HttpURLConnection conn=null;
-      URL url = null;
-
-      try {
-
-          url = new URL("https://bluetalk.herokuapp.com/piconets/new");//?username1="+MyName+"+username2="+mUser
+        new JoinAsyncFetch(PiconetId).execute();
 
 
-      } catch (MalformedURLException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-          //  return e.toString();
-      }
-      try {
+    }
 
-          // Setup HttpURLConnection class to send and receive data from php and mysql
-          conn = (HttpURLConnection) url.openConnection();
-
-          conn.setReadTimeout(READ_TIMEOUT);
-          conn.setConnectTimeout(CONNECTION_TIMEOUT);
-
-          conn.setRequestMethod("GET");
-          conn.setRequestProperty("USER-AGENT", "Mozilla/5.0");
-          conn.setRequestProperty("ACCEPT-LANGUAGE", "en-US,en;0.5");
-
-
-          conn.setDoOutput(true);
-
-      } catch (IOException e1) {
-          // TODO Auto-generated catch block
-          e1.printStackTrace();
-          return e1.toString();
-      }
-      try {
-         String urlParameters = "";
-          // "Channel="+ChannelId+"&Master="+71226125+"&Timer="+null+"&Name=Stars";
-          DataOutputStream outputPost = new DataOutputStream(conn.getOutputStream());
-          outputPost.writeBytes(urlParameters);
-          outputPost.flush();
-          outputPost.close();
-//                conn.setFixedLengthStreamingMode(urlParameters.getBytes().length);
-          //               conn.setChunkedStreamingMode(0);
-
-      } catch (IOException e) {
-          e.printStackTrace();
-           return e.toString();
-      } finally {
-          conn.disconnect();
-      }
-      // return ("success");
-  }
-public void onCreatePiconet(int ChannelId) {
-    new AsyncFetch().execute();
-
-}
     /************************************************************/
-    private class AsyncFetch extends AsyncTask<String, String, String> {
+    private class JoinAsyncFetch extends AsyncTask<String, String, String> {
+        JoinAsyncFetch(int PiconetId) {
+            PiconetID = PiconetId;
+
+        }
+
+        int PiconetID;
         ProgressDialog pdLoading = new ProgressDialog(MainActivity.this);
         HttpURLConnection conn;
         URL url = null;
@@ -156,7 +113,7 @@ public void onCreatePiconet(int ChannelId) {
         protected String doInBackground(String... params) {
             try {
 
-                url = new URL("https://bluetalk.herokuapp.com/piconets/new");//?username1="+MyName+"+username2="+mUser
+                url = new URL("https://bluetalk.herokuapp.com/piconets#join?piconet_id="+PiconetID + "&user_id=" + mobile_num);//?username1="+MyName+"+username2="+mUser
 
 
             } catch (MalformedURLException e) {
@@ -172,7 +129,7 @@ public void onCreatePiconet(int ChannelId) {
                 conn.setReadTimeout(READ_TIMEOUT);
                 conn.setConnectTimeout(CONNECTION_TIMEOUT);
 
-                conn.setRequestMethod("POST");
+                conn.setRequestMethod("GET");
                 conn.setRequestProperty("USER-AGENT", "Mozilla/5.0");
                 conn.setRequestProperty("ACCEPT-LANGUAGE", "en-US,en;0.5");
 
@@ -183,28 +140,113 @@ public void onCreatePiconet(int ChannelId) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
                 return e1.toString();
-            }
-            try {
-                String urlParameters = "Channel="+ChannelId+"&Master=71226125&Timer=null&Name=Stars";
-
-                DataOutputStream outputPost = new DataOutputStream(conn.getOutputStream());
-                outputPost.writeBytes(urlParameters);
-                outputPost.flush();
-                outputPost.close();
-//                conn.setFixedLengthStreamingMode(urlParameters.getBytes().length);
-                //               conn.setChunkedStreamingMode(0);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                return e.toString();
             } finally {
                 conn.disconnect();
             }
             return ("success");
         }
 
+        @Override
+        protected void onPostExecute(String result) {
 
+            //this method will be running on UI thread
+
+            pdLoading.dismiss();
+
+
+        }
     }
+
+        public void onCreatePiconet(int ChannelId) {
+            new CreateAsyncSend(ChannelId).execute();
+
+        }
+
+
+          /************************************************************/
+          private class CreateAsyncSend extends AsyncTask<String, String, String> {
+
+              CreateAsyncSend(int ChannelId) {
+                  ChannelID = ChannelId;
+
+              }
+
+              int ChannelID;
+              ProgressDialog pdLoading = new ProgressDialog(MainActivity.this);
+              HttpURLConnection conn;
+              URL url = null;
+
+              @Override
+              protected void onPreExecute() {
+                  super.onPreExecute();
+
+                  //this method will be running on UI thread
+                  pdLoading.setMessage("\tLoading...");
+                  pdLoading.setCancelable(false);
+                  pdLoading.show();
+
+              }
+
+              @Override
+              protected String doInBackground(String... params) {
+                  try {
+
+                      url = new URL("https://bluetalk.herokuapp.com/piconets/new");//?username1="+MyName+"+username2="+mUser
+
+
+                  } catch (MalformedURLException e) {
+                      // TODO Auto-generated catch block
+                      e.printStackTrace();
+                      return e.toString();
+                  }
+                  try {
+
+                      // Setup HttpURLConnection class to send and receive data from php and mysql
+                      conn = (HttpURLConnection) url.openConnection();
+
+                      conn.setReadTimeout(READ_TIMEOUT);
+                      conn.setConnectTimeout(CONNECTION_TIMEOUT);
+
+                      conn.setRequestMethod("POST");
+                      conn.setRequestProperty("USER-AGENT", "Mozilla/5.0");
+                      conn.setRequestProperty("ACCEPT-LANGUAGE", "en-US,en;0.5");
+
+
+                      //  conn.setDoOutput(true);
+
+                  } catch (IOException e1) {
+                      // TODO Auto-generated catch block
+                      e1.printStackTrace();
+                      return e1.toString();
+                  }
+                  try {
+                      String urlParameters = "Channel=" + ChannelID + "&Master=71226125&Timer=null&Name=Stars";
+
+                      DataOutputStream outputPost = new DataOutputStream(conn.getOutputStream());
+                      outputPost.writeBytes(urlParameters);
+                      outputPost.flush();
+                      outputPost.close();
+//                conn.setFixedLengthStreamingMode(urlParameters.getBytes().length);
+                      //               conn.setChunkedStreamingMode(0);
+
+                  } catch (IOException e) {
+                      e.printStackTrace();
+                      return e.toString();
+                  } finally {
+                      conn.disconnect();
+                  }
+                  return ("success");
+              }
+
+              @Override
+              protected void onPostExecute(String result) {
+
+                  //this method will be running on UI thread
+
+                  pdLoading.dismiss();
+
+              }
+          }
 
 
 

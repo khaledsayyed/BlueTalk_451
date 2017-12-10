@@ -129,7 +129,7 @@ public class HomeFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentcInteraction(DataChannel dataChannel);
         void onCreatePiconet( int ChannelId);
-        void onJoinPiconet(int ChannelId);
+        void onJoinPiconet(int PiconetId);
 
     }
 
